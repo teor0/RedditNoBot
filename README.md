@@ -1,2 +1,2 @@
 # RedditNoBot
-A reddito bot for r/SakabuNoMaiku
+A reddit bot for r/SakabuNoMaiku
