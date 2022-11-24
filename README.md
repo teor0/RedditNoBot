@@ -1,2 +1,2 @@
-# RedditNoBot
-A reddit bot for r/SakabuNoMaiku
+# ScriptsRedditBot
+Vari script utili per la realizzazione di un bot reddit
