@@ -1,11 +1,59 @@
+"""YoutubeModule
+
+Questo modulo contiene le seguenti funzioni:
+    * get_all_playlist - ritorna tutte le playlist di un canale con all'interno anche i video 
+    * get_videos - ritorna tutti i video di una playlist
+    * get_last_upload - ritorna l'ultimo video caricato da un canale
+    * get_playlist_duration - ritorna la durata totale di una playlist 
+
+License:
+    MIT License
+
+    Copyright (c) 2022 Matteo Orlando
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+Author: 
+    Matteo Orlando
+    """
+
+
 import re
 from datetime import timedelta
 
-# funzione per ottenere tutte le playlist da un canale
-def get_and_store_data(service, channel_id):
+
+def get_all_playlist(service, channel_id):
+    """Funzione per ottenere tutte le playlist da un canale Youtube
+    
+    Parameters
+    ---------
+    service : Resource Object
+        Oggetto ottenuto tramite il metodo build della API
+    channel_id : str
+        ID del canale Youtube
+    
+    Returns
+    -------
+    dict
+        dictionary contenente {titolo playlist:{titolo video:link}}
+    """
     next_page_token = None
-    # utilizzo un dictionary per memorizzare {nome playlist, link video della playlist}
-    # se c'è un modo migliore si utilizza
     dic = {}
     while True:
         pl_request = service.playlists().list(
@@ -25,10 +73,22 @@ def get_and_store_data(service, channel_id):
     return dic
 
 
-# funzione per ottenere tutti i video da una playlist
 def get_videos(service, playlist_id):
+    """Funzione per ottenere tutte i video da una playlist Youtube
+    
+    Parameters
+    ---------
+    service : Resource Object
+        Oggetto ottenuto tramite il metodo build della API
+    playlist_id : str
+        ID della playlist Youtube
+    
+    Returns
+    -------
+    dict
+        dictionary contenente {titolo video:link}
+    """
     next_page_token = None
-    # stesso discorso, utilizzo un dictionary per memorizzare {titolo, link}
     video = {}
     while True:
         pl_request = service.playlistItems().list(
@@ -48,8 +108,48 @@ def get_videos(service, playlist_id):
     return video
 
 
+def get_last_upload(service,channel_id):
+    """Funzione per ottenere l'ultimo video caricato da un canale Youtube
+    
+    Parameters
+    ---------
+    service : Resource Object
+        Oggetto ottenuto tramite il metodo build della API
+    channel_id : str
+        ID del canale Youtube
+    
+    Returns
+    -------
+    tuples
+        tupla formata da titolo video, link
+    """
+    play_id='UU'+channel_id[2:]
+    v_request = service.playlistItems().list(
+        part='contentDetails,snippet',
+        playlistId=play_id,
+    )
+    v_response = v_request.execute()
+    title = v_response['items'][0]['snippet']['title']
+    link = 'https://www.youtube.com/watch?v=' + v_response['items'][0]['snippet']['resourceId']['videoId']
+    return title,link
+
+
 #funzione per ottenere la durata totale di una playlist
 def get_playlist_duration(service, play_id):
+    """Funzione per la durata complessiva di una playlist youtube
+
+    Parameters
+    ---------
+    service : Resource Object
+        Oggetto ottenuto tramite il metodo build della API
+    play_id : str
+        ID della playlist Youtube
+
+    Returns
+    -------
+    str
+        stringa contenente la durata totale della playlist espressa in HH:MM::SS    
+    """
     regex_hour = re.compile(r'(\d+)H')
     regex_min = re.compile(r'(\d+)M')
     regex_sec = re.compile(r'(\d+)S')
