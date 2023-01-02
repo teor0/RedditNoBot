@@ -1,4 +1,4 @@
- """RedditModule
+"""RedditModule
 
 Questo modulo contiene le seguenti funzioni:
     * get_number_post_comment - ritorna il numero di commenti all'interno di un post
