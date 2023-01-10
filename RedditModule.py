@@ -7,7 +7,7 @@ Questo modulo contiene le seguenti funzioni:
 License:
     MIT License
 
-    Copyright (c) 2022 Matteo Orlando
+    Copyright (c) 2023 Matteo Orlando
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -27,10 +27,9 @@ License:
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 
-Author: 
+Author:
     Matteo Orlando
-    """
-import datetime
+"""
 
 
 def get_number_post_comment(reddit_instance, submission_id):
@@ -52,12 +51,10 @@ def get_number_post_comment(reddit_instance, submission_id):
     return len(submission.comments.list())
 
 
-def delete_specific_post(reddit_instance, sub, flair, hours_threshold, min_comment):
+def delete_specific_post(reddit_instance, sub, flair, min_comment, post_limit):
     """Funzione per rimuovere come moderatore un post sotto le seguenti condizioni:
         - flair del post è quello passato alla funzione
-        - ore passate rispetto alla pubblicazione sono maggiore di un limite
-        - numero di commenti inferiore ad un minimo
-        N.B. i post candidati alla rimozione sono tra i primi 10 nuovi post
+        - numero di commenti inferiori ad una soglia
 
     Parameters
     ---------
@@ -67,17 +64,17 @@ def delete_specific_post(reddit_instance, sub, flair, hours_threshold, min_comme
         nome del subreddit su cui cercare i post
     flair : str
         flair utilizzato per individuare specifici post
-    hours_threshold : float
-        ore dopo la quale il post è candidato alla rimozione
     min_comment : int
         numero minimo di commenti che non fanno scattare la rimozione
+    post_limit : int
+        numero limite dei post da considerare
 
     """
     subreddit = reddit_instance.subreddit(sub)
-    for submission in subreddit.new(limit=10):
-        now = datetime.datetime.now()
-        dt = datetime.datetime.fromtimestamp(submission.created_utc)
-        hours_passed = (now-dt).total_seconds()/3600
-        if submission.link_flair_template_id == flair and hours_passed > hours_threshold \
-                and get_number_post_comment(reddit_instance,submission.id) < min_comment:
+    for submission in subreddit.new(limit=post_limit):
+        if submission.link_flair_template_id == flair and get_number_post_comment(reddit_instance,submission.id) < min_comment:
             submission.mod.remove()
+
+
+def submit_post_no_text(reddit_instance,sub,title,flair):
+    reddit_instance.subreddit(sub).submit(title, url="put url here", flair_id=flair)
