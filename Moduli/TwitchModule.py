@@ -27,7 +27,7 @@ License:
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 
-Author: 
+Author:
     Matteo Orlando
 """
 import requests
@@ -47,7 +47,7 @@ def get_oauth(client_id,client_secret):
     Returns
     -------
     dict
-        Dictionary contenente i campi dell'access token  
+        Dictionary contenente i campi dell'access token
     """
 
     body = {
@@ -96,7 +96,7 @@ def get_stream_info(client_id, client_secret, streamer):
             title = stream_data['data'][0]['title']
             return True,game,title
        else:
-            return False,None,None
+           return False,None,None
     else:
         keys=get_oauth(client_id,client_secret)
         headers = {
@@ -127,7 +127,7 @@ def is_stream_off(client_id, client_secret, streamer):
     Returns
     -------
     Boolean
-        True se lo streamer è offline, false altrimenti  
+        True se lo streamer è offline, false altrimenti
     """
     if(os.path.exists("/tmp/keys.json")):
         with open("/tmp/keys.json", "r") as f:
@@ -141,7 +141,7 @@ def is_stream_off(client_id, client_secret, streamer):
     stream = requests.get('https://api.twitch.tv/helix/streams?user_login=' + streamer, headers=headers)
     if(stream.status_code==200):
        stream_data = stream.json()
-       return len(stream_data['data']) == 0 
+       return len(stream_data['data']) == 0
     else:
         keys=get_oauth(client_id,client_secret)
         headers = {

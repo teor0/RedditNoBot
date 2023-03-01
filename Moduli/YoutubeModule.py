@@ -31,7 +31,7 @@ License:
 
 Author: 
     Matteo Orlando
-    """
+"""
 
 
 import re
@@ -134,7 +134,6 @@ def get_last_upload(service,channel_id):
     return title,link
 
 
-#funzione per ottenere la durata totale di una playlist
 def get_playlist_duration(service, play_id):
     """Funzione per la durata complessiva di una playlist youtube
 
